@@ -1,0 +1,72 @@
+import Flutter
+import UIKit
+
+public class SwiftSignalr1Plugin: NSObject, FlutterPlugin {
+
+static var channel: FlutterMethodChannel!
+static var channel1: FlutterMethodChannel!
+
+  public static func register(with registrar: FlutterPluginRegistrar) {
+     channel = FlutterMethodChannel(name: "signalr1", binaryMessenger: registrar.messenger())
+    let instance = SwiftSignalr1Plugin()
+    registrar.addMethodCallDelegate(instance, channel: channel)
+    channel1 = FlutterMethodChannel(name: "signalr1", binaryMessenger: registrar.messenger())
+        let instance1 = SwiftSignalr1Plugin()
+        registrar.addMethodCallDelegate(instance1, channel: channel1)
+  }
+
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    switch call.method {
+        case CallMethod.connectToServer.rawValue:
+          let arguments = call.arguments as! Dictionary<String, Any>
+          SignalRWrapper.instance.connectToServer(baseUrl: arguments["baseUrl"] as! String,
+                                                  hubName: arguments["hubName"] as! String,
+                                                  transport: arguments["transport"] as? Int ?? 0,
+                                                  queryString: arguments["queryString"] as? String ?? "",
+                                                  headers: arguments["headers"] as? [String:String] ?? [String: String](),
+                                                  hubMethods: arguments["hubMethods"] as? [String] ?? [],
+                                                  result: result)
+          break
+        case CallMethod.reconnect.rawValue:
+          SignalRWrapper.instance.reconnect(result: result)
+          break
+        case CallMethod.stop.rawValue:
+          SignalRWrapper.instance.stop(result: result)
+          break
+        case CallMethod.listenToHubMethod.rawValue:
+          let methodName = call.arguments as! String
+          SignalRWrapper.instance.listenToHubMethod(methodName: methodName, result: result)
+          break
+        case CallMethod.invokeServerMethod.rawValue:
+          let arguments = call.arguments as! Dictionary<String, Any>
+          SignalRWrapper.instance.invokeServerMethod(methodName: arguments["methodName"] as! String, arguments: arguments["arguments"] as? [Any], result: result)
+          break
+          case CallMethod.connectToServer1.rawValue:
+                    let arguments = call.arguments as! Dictionary<String, Any>
+                    SignalRWrapper.instance1.connectToServer1(baseUrl: arguments["baseUrl"] as! String,
+                                                            hubName: arguments["hubName"] as! String,
+                                                            transport: arguments["transport"] as? Int ?? 0,
+                                                            queryString: arguments["queryString"] as? String ?? "",
+                                                            headers: arguments["headers"] as? [String:String] ?? [String: String](),
+                                                            hubMethods: arguments["hubMethods"] as? [String] ?? [],
+                                                            result: result)
+                    break
+                  case CallMethod.reconnect1.rawValue:
+                    SignalRWrapper.instance1.reconnect1(result: result)
+                    break
+                  case CallMethod.stop1.rawValue:
+                    SignalRWrapper.instance1.stop1(result: result)
+                    break
+                  case CallMethod.listenToHubMethod1.rawValue:
+                    let methodName = call.arguments as! String
+                    SignalRWrapper.instance1.listenToHubMethod1(methodName: methodName, result: result)
+                    break
+                  case CallMethod.invokeServerMethod1.rawValue:
+                    let arguments = call.arguments as! Dictionary<String, Any>
+                    SignalRWrapper.instance1.invokeServerMethod1(methodName: arguments["methodName"] as! String, arguments: arguments["arguments"] as? [Any], result: result)
+                    break
+        default:
+          result(FlutterMethodNotImplemented)
+        }
+  }
+}
